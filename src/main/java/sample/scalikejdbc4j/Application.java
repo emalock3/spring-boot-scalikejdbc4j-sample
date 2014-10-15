@@ -11,6 +11,7 @@ import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import org.zapodot.jackson.java8.JavaOptionalModule;
 import sample.dao.CompanyDao;
@@ -32,22 +33,26 @@ public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
-    
-    @Configuration
-    static class ConnectionPoolConfiguration implements ApplicationListener<ApplicationContextEvent> {
+
+    @Component
+    static class ConnectionPoolSetting implements ApplicationListener<ApplicationContextEvent> {
+        private final DataSource dataSource;
+
         @Autowired
-        DataSource dataSource;
+        ConnectionPoolSetting(DataSource dataSource) {
+            this.dataSource = dataSource;
+        }
 
         @Override
         public void onApplicationEvent(ApplicationContextEvent event) {
             initDataSource();
             initQueryLogLevel();
         }
-        
+
         private void initDataSource() {
             ConnectionPool.singleton(new DataSourceConnectionPool(dataSource));
         }
-        
+
         private void initQueryLogLevel() {
             LoggingSQLAndTimeSettings loggingSettings = new LoggingSQLAndTimeSettings();
             loggingSettings.setLogLevel(LogLevel.INFO);
@@ -66,7 +71,7 @@ public class Application {
     @RestController
     @RequestMapping("/companies")
     static class CompanyController {
-        
+
         @RequestMapping(method = RequestMethod.GET)
         Page<Company> findAll(@RequestParam(value = "page", defaultValue = "0") int page,
                               @RequestParam(value = "size", defaultValue = "10") int pageSize) {
@@ -107,5 +112,5 @@ public class Application {
             });
         }
     }
-    
+
 }
