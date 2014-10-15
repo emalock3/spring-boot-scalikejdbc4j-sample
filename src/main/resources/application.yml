@@ -1,0 +1,9 @@
+spring:
+  main.show_banner: false
+  application.name: spring-boot-scalikejdbc4j-sample
+  datasource:
+    url: jdbc:h2:mem:sample
+    username: sa
+    password: sa
+    driverClassName: org.h2.Driver
+
