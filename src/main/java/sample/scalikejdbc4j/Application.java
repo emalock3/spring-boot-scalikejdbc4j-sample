@@ -1,5 +1,6 @@
 package sample.scalikejdbc4j;
 
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -13,7 +14,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
-import org.zapodot.jackson.java8.JavaOptionalModule;
 import sample.dao.CompanyDao;
 import sample.dao.ProgrammerDao;
 import sample.scalikejdbc4j.entity.Company;
@@ -35,11 +35,11 @@ public class Application {
     }
 
     @Component
-    static class ConnectionPoolSetting implements ApplicationListener<ApplicationContextEvent> {
+    static class ConnectionPoolSettings implements ApplicationListener<ApplicationContextEvent> {
         private final DataSource dataSource;
 
         @Autowired
-        ConnectionPoolSetting(DataSource dataSource) {
+        ConnectionPoolSettings(DataSource dataSource) {
             this.dataSource = dataSource;
         }
 
@@ -61,10 +61,10 @@ public class Application {
     }
 
     @Configuration
-    static class MvcConfiguration {
+    static class JacksonModuleConfiguration {
         @Bean
-        JavaOptionalModule javaOptionalModule() {
-            return new JavaOptionalModule();
+        Jdk8Module javaOptionalModule() {
+            return new Jdk8Module();
         }
     }
 
